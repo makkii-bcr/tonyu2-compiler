@@ -619,6 +619,7 @@ function annotateSource2(klass:C_Meta, env:BuilderEnv) {//B
 				} else {
 					if (isBlockScopeDeclprefix(node.inFor.isVar)) {
 						for (let v of node.inFor.vars) {
+							//prohibitNonBlockScopeDeclConflict(ctx.finfo, v)
 							prohibitGlobalNameOnBlockScopeDecl(v);
 							ns[v.text]=new SI.LOCAL(ctx.finfo,true);
 						}
@@ -901,19 +902,38 @@ function annotateSource2(klass:C_Meta, env:BuilderEnv) {//B
 		f.paramTypes=resolveTypesOfParams(f.params!);
 		//console.log("F_PARAMTYPES", f.name, f.paramTypes);
 	}
+	function declaredAsNonBlockScope(finfo: FuncInfo ,name: Token) {
+		if (finfo.params.some(p=>p.name.text===name.text)) return true;
+		if (isNonArrowFuncInfo(finfo)) {
+			if (finfo.locals && finfo.locals.varDecls[name.text]) return true;
+		}
+		return false;
+	}
+	function prohibitNonBlockScopeDeclConflict(finfo: FuncInfo, name: Token) {
+		const ism=ctx.finfo.isMain;
+		if (!ism && declaredAsNonBlockScope(ctx.finfo, name)) {
+			throw TError(R("blockScopedVarDeclConflict",name.text),srcFile,name.pos);
+		}
+	}
 	function collectBlockScopedVardecl(stmts:Stmt[],scope:ScopeMap) {
+		const dupcheck=new Set<string>();
 		for (let stmt of stmts) {
 			if (stmt.type==="varsDecl" && isBlockScopeDeclprefix(stmt.declPrefix)) {
 				const ism=ctx.finfo.isMain;
 				//console.log("blockscope",ctx,ism);
 				if (ism && !ctx.inBlockScope) annotation(stmt, {varInMain:true});
 				for (const d of stmt.decls) {
+					prohibitNonBlockScopeDeclConflict(ctx.finfo, d.name);
 					prohibitGlobalNameOnBlockScopeDecl(d.name);
 					if (ism && !ctx.inBlockScope) {
 						annotation(d,{varInMain:true});
 						annotation(d,{declaringClass:klass});
 					} else {
 						const si=new SI.LOCAL(ctx.finfo, true);
+						if (dupcheck.has(d.name.text)) {
+							throw TError(R("duplicateVarDecl",d.name.text),srcFile,d.pos);
+						}
+						dupcheck.add(d.name.text);
 						scope[d.name.text]=si;
 						annotation(d,{declaringFunc:ctx.finfo, scopeInfo:si});
 					}

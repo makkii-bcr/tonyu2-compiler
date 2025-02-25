@@ -490,7 +490,7 @@ const Tonyu = {
         console.log(e.stack);
         throw e;
     }, TError: TError_1.default,
-    VERSION: 1560828115159,
+    VERSION: 1560828115159, //EMBED_VERSION
     A, ID: Math.random()
 };
 //const TT=TonyuThreadF(Tonyu);

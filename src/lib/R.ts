@@ -33,6 +33,8 @@ const ja={
     infiniteLoopDetected: "無限ループをストップしました。\n"+
         "   プロジェクト オプションで無限ループチェックの有無を設定できます。\n"+
         "   [参考]https://edit.tonyu.jp/doc/options.html\n",
+    "blockScopedVarDeclConflict": "'{1}' は引数または'var'ですでに定義されています.",
+    "duplicateVarDecl": "'{1}'が２回定義されています。",
 };
 const en={
     "MethodAlreadyDeclared": "Method {1} is already defined",
@@ -67,6 +69,8 @@ const en={
     "newIsRequiredOnInstanciate" : "new is required to Instanciate {1}", //クラス名{1}はnewをつけて呼び出して下さい。
     "bootClassIsNotFound" : "Boot Class {1} Is Not Found", //{1}というクラスはありません．
     "infiniteLoopDetected" : "Infinite Loop Detected",
+    "blockScopedVarDeclConflict": "'{1}' is already declared as a parmeter or 'var' declaration.",
+    "duplicateVarDecl": "'{1}' is declared twice.",
 };
 /*let buf="";
     for (let k of Object.keys(ja)) {

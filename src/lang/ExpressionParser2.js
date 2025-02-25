@@ -1,7 +1,7 @@
 "use strict";
 // parser.js の補助ライブラリ．式の解析を担当する
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExpressionParser = void 0;
+exports.ExpressionParser = ExpressionParser;
 const parser_1 = require("./parser");
 //import Parser from "./parser";
 const OPTYPE = Symbol("OPTYPE");
@@ -298,5 +298,4 @@ function ExpressionParser(context, name = "Expression") {
     }
     return $;
 }
-exports.ExpressionParser = ExpressionParser;
 ;

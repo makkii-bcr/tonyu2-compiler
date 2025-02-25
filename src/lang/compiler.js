@@ -3,7 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getParams = exports.getDependingClasses = exports.getProperty = exports.getMethod = exports.getField = exports.typeDigest2ResolvedType = exports.digestDecls = exports.resolvedType2Digest = exports.getSource = exports.packAnnotation = exports.annotation = exports.genSym = exports.nullCheck = exports.newScope = exports.getScopeType = exports.ScopeInfos = exports.ScopeTypes = exports.isNonBlockScopeDeclprefix = exports.isBlockScopeDeclprefix = void 0;
+exports.ScopeInfos = exports.ScopeTypes = void 0;
+exports.isBlockScopeDeclprefix = isBlockScopeDeclprefix;
+exports.isNonBlockScopeDeclprefix = isNonBlockScopeDeclprefix;
+exports.getScopeType = getScopeType;
+exports.newScope = newScope;
+exports.nullCheck = nullCheck;
+exports.genSym = genSym;
+exports.annotation = annotation;
+exports.packAnnotation = packAnnotation;
+exports.getSource = getSource;
+exports.resolvedType2Digest = resolvedType2Digest;
+exports.digestDecls = digestDecls;
+exports.typeDigest2ResolvedType = typeDigest2ResolvedType;
+exports.getField = getField;
+exports.getMethod = getMethod;
+exports.getProperty = getProperty;
+exports.getDependingClasses = getDependingClasses;
+exports.getParams = getParams;
 const TonyuRuntime_1 = __importDefault(require("../runtime/TonyuRuntime"));
 const root_1 = __importDefault(require("../lib/root"));
 const CompilerTypes_1 = require("./CompilerTypes");
@@ -12,13 +29,11 @@ const NONBLOCKSCOPE_DECLPREFIX = "var";
 function isBlockScopeDeclprefix(t) {
     return t && t.text !== NONBLOCKSCOPE_DECLPREFIX;
 }
-exports.isBlockScopeDeclprefix = isBlockScopeDeclprefix;
 function isNonBlockScopeDeclprefix(t) {
     return t && t.text === NONBLOCKSCOPE_DECLPREFIX;
 }
-exports.isNonBlockScopeDeclprefix = isNonBlockScopeDeclprefix;
 exports.ScopeTypes = {
-    FIELD: "field", METHOD: "method", NATIVE: "native",
+    FIELD: "field", METHOD: "method", NATIVE: "native", //B
     LOCAL: "local", THVAR: "threadvar", PROP: "property",
     PARAM: "param", GLOBAL: "global",
     CLASS: "class", MODULE: "module"
@@ -103,7 +118,7 @@ var ScopeInfos;
         }
     }
     ScopeInfos.MODULE = MODULE;
-})(ScopeInfos = exports.ScopeInfos || (exports.ScopeInfos = {}));
+})(ScopeInfos || (exports.ScopeInfos = ScopeInfos = {}));
 ;
 let nodeIdSeq = 1;
 let symSeq = 1; //B
@@ -111,26 +126,22 @@ let symSeq = 1; //B
 function getScopeType(st) {
     return st ? st.type : null;
 }
-exports.getScopeType = getScopeType;
 //cu.getScopeType=stype;
 function newScope(s) {
     const f = function () { };
     f.prototype = s;
     return new f();
 }
-exports.newScope = newScope;
 //cu.newScope=newScope;
 function nullCheck(o, mesg) {
     if (!o)
         throw mesg + " is null";
     return o;
 }
-exports.nullCheck = nullCheck;
 //cu.nullCheck=nc;
 function genSym(prefix) {
     return prefix + ((symSeq++) + "").replace(/\./g, "");
 }
-exports.genSym = genSym;
 //cu.genSym=genSym;
 function annotation(aobjs, node, aobj = undefined) {
     if (!node._id) {
@@ -150,7 +161,6 @@ function annotation(aobjs, node, aobj = undefined) {
     }
     return res;
 }
-exports.annotation = annotation;
 function packAnnotation(aobjs) {
     if (!aobjs)
         return;
@@ -162,7 +172,6 @@ function packAnnotation(aobjs) {
             delete aobjs[k];
     }
 }
-exports.packAnnotation = packAnnotation;
 //cu.extend=extend;
 /*function extend(res,aobj) {
     for (let i in aobj) res[i]=aobj[i];
@@ -172,7 +181,6 @@ exports.packAnnotation = packAnnotation;
 function getSource(srcCont, node) {
     return srcCont.substring(node.pos, node.pos + node.len);
 }
-exports.getSource = getSource;
 //cu.getSource=getSource;
 //cu.getField=getField;
 /*export function klass2name(t: AnnotatedType) {
@@ -203,7 +211,6 @@ function resolvedType2Digest(t) {
         return { element: resolvedType2Digest(t.element) };
     }
 }
-exports.resolvedType2Digest = resolvedType2Digest;
 function digestDecls(klass) {
     //console.log("DIGEST", klass.decls.methods);
     var res = { methods: {}, fields: {} };
@@ -229,7 +236,6 @@ function digestDecls(klass) {
     }
     return res;
 }
-exports.digestDecls = digestDecls;
 function typeDigest2ResolvedType(d) {
     if (typeof d === "string") {
         if (TonyuRuntime_1.default.classMetas[d]) {
@@ -246,7 +252,6 @@ function typeDigest2ResolvedType(d) {
         return { candidates: d.candidates.map(typeDigest2ResolvedType) };
     }
 }
-exports.typeDigest2ResolvedType = typeDigest2ResolvedType;
 function getField(klass, name) {
     if (klass instanceof Function)
         return null;
@@ -262,7 +267,6 @@ function getField(klass, name) {
     }
     return res;
 }
-exports.getField = getField;
 function getMethod(klass, name) {
     let res = null;
     for (let k of getDependingClasses(klass)) {
@@ -272,7 +276,6 @@ function getMethod(klass, name) {
     }
     return res;
 }
-exports.getMethod = getMethod;
 function getProperty(klass, name) {
     const getter = getMethod(klass, TonyuRuntime_1.default.klass.property.methodFor("get", name));
     const setter = getMethod(klass, TonyuRuntime_1.default.klass.property.methodFor("set", name));
@@ -280,7 +283,6 @@ function getProperty(klass, name) {
         return null;
     return { getter, setter };
 }
-exports.getProperty = getProperty;
 //cu.getMethod=getMethod2;
 // includes klass itself
 function getDependingClasses(klass) {
@@ -303,7 +305,6 @@ function getDependingClasses(klass) {
     loop(klass);
     return res;
 }
-exports.getDependingClasses = getDependingClasses;
 //cu.getDependingClasses=getDependingClasses;
 function getParams(method) {
     let res = [];
@@ -318,6 +319,5 @@ function getParams(method) {
         res = res.concat(ps);
     return res;
 }
-exports.getParams = getParams;
 //cu.getParams=getParams;
 //export= cu;

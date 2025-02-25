@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.context = exports.RawContext = void 0;
+exports.RawContext = void 0;
+exports.context = context;
 /*export= function context() {
     var c:any={};
     c.ovrFunc=function (from , to) {
@@ -45,4 +46,3 @@ function context() {
     res.value = res;
     return res;
 }
-exports.context = context;

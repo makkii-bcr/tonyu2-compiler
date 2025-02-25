@@ -28,6 +28,7 @@ switch (a[0]) {
     break;
 }
 test2();
+x=10;f(); 
 \test2() {
     //console.log("START2",i );
     for (let i=test();i<10;i++) {
@@ -46,6 +47,13 @@ test2();
         var x=i;
     }
     console.log(x);
+}
+\f() { 
+    let x=5; 
+    \sub() { 
+        console.log("It should be 5:",x);//NOT 10!!
+    } 
+    sub();
 }
 /*let $x=3;
 for (let $y=3;$y<3; $y++) {

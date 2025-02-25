@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -11,18 +15,30 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.annotate = exports.initClassDecls = exports.parse = void 0;
+exports.annotate = void 0;
+exports.parse = parse;
+exports.initClassDecls = initClassDecls;
 const TonyuRuntime_1 = __importDefault(require("../runtime/TonyuRuntime"));
 const R_1 = __importDefault(require("../lib/R"));
 const TError_1 = __importDefault(require("../runtime/TError"));
@@ -90,7 +106,6 @@ function parse(klass, options = {}) {
     }
     return node;
 }
-exports.parse = parse;
 //-----------
 function initClassDecls(klass, env) {
     // The main task of initClassDecls is resolve 'dependency', it calls before orderByInheritance
@@ -242,7 +257,6 @@ function initClassDecls(klass, env) {
     //delete klass.hasSemanticError;
     // Why delete deleted? because decls.methods.params is still undef
 } // of initClassDecls
-exports.initClassDecls = initClassDecls;
 function annotateSource2(klass, env) {
     // annotateSource2 is call after orderByInheritance
     klass.hasSemanticError = true;
@@ -654,6 +668,7 @@ function annotateSource2(klass, env) {
                 else {
                     if ((0, compiler_1.isBlockScopeDeclprefix)(node.inFor.isVar)) {
                         for (let v of node.inFor.vars) {
+                            //prohibitNonBlockScopeDeclConflict(ctx.finfo, v)
                             prohibitGlobalNameOnBlockScopeDecl(v);
                             ns[v.text] = new SI.LOCAL(ctx.finfo, true);
                         }
@@ -953,7 +968,23 @@ function annotateSource2(klass, env) {
         f.paramTypes = resolveTypesOfParams(f.params);
         //console.log("F_PARAMTYPES", f.name, f.paramTypes);
     }
+    function declaredAsNonBlockScope(finfo, name) {
+        if (finfo.params.some(p => p.name.text === name.text))
+            return true;
+        if ((0, CompilerTypes_1.isNonArrowFuncInfo)(finfo)) {
+            if (finfo.locals && finfo.locals.varDecls[name.text])
+                return true;
+        }
+        return false;
+    }
+    function prohibitNonBlockScopeDeclConflict(finfo, name) {
+        const ism = ctx.finfo.isMain;
+        if (!ism && declaredAsNonBlockScope(ctx.finfo, name)) {
+            throw (0, TError_1.default)((0, R_1.default)("blockScopedVarDeclConflict", name.text), srcFile, name.pos);
+        }
+    }
     function collectBlockScopedVardecl(stmts, scope) {
+        const dupcheck = new Set();
         for (let stmt of stmts) {
             if (stmt.type === "varsDecl" && (0, compiler_1.isBlockScopeDeclprefix)(stmt.declPrefix)) {
                 const ism = ctx.finfo.isMain;
@@ -961,6 +992,7 @@ function annotateSource2(klass, env) {
                 if (ism && !ctx.inBlockScope)
                     annotation(stmt, { varInMain: true });
                 for (const d of stmt.decls) {
+                    prohibitNonBlockScopeDeclConflict(ctx.finfo, d.name);
                     prohibitGlobalNameOnBlockScopeDecl(d.name);
                     if (ism && !ctx.inBlockScope) {
                         annotation(d, { varInMain: true });
@@ -968,6 +1000,10 @@ function annotateSource2(klass, env) {
                     }
                     else {
                         const si = new SI.LOCAL(ctx.finfo, true);
+                        if (dupcheck.has(d.name.text)) {
+                            throw (0, TError_1.default)((0, R_1.default)("duplicateVarDecl", d.name.text), srcFile, d.pos);
+                        }
+                        dupcheck.add(d.name.text);
                         scope[d.name.text] = si;
                         annotation(d, { declaringFunc: ctx.finfo, scopeInfo: si });
                     }

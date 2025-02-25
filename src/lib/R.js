@@ -34,6 +34,8 @@ const ja = {
     infiniteLoopDetected: "無限ループをストップしました。\n" +
         "   プロジェクト オプションで無限ループチェックの有無を設定できます。\n" +
         "   [参考]https://edit.tonyu.jp/doc/options.html\n",
+    "blockScopedVarDeclConflict": "'{1}' は引数または'var'ですでに定義されています.",
+    "duplicateVarDecl": "'{1}'が２回定義されています。",
 };
 const en = {
     "MethodAlreadyDeclared": "Method {1} is already defined",
@@ -41,33 +43,35 @@ const en = {
     cannotCallNonFunctionType: "Cannot call what is neither function or method.",
     memberNotFoundInClass: "No such field or method: {1}.{2}",
     "expected": "Expected: {1}",
-    "superClassIsUndefined": "Super Class '{1}' is not defined",
-    "classIsUndefined": "Class {1} is Undefined",
-    "invalidLeftValue": "{1} is not a valid Left Value",
-    "fieldDeclarationRequired": "'{1}' is not declared, If you have meant it is a Field, Declare Explicitly.",
-    "duplicateKeyInObjectLiteral": "Duplicate Key In Object Literal: {1}",
-    "cannotUseStringLiteralAsAShorthandOfObjectValue": "Cannot Use String Literal as a Shorthand of Object Value",
-    "breakShouldBeUsedInIterationOrSwitchStatement": "break; Should be Used In Iteration or switch Statement",
-    "continueShouldBeUsedInIterationStatement": "continue; Should be Used In Iteration Statement",
-    "cannotUseObjectLiteralAsTheExpressionOfStatement": "Cannot Use Object Literal As The Expression Of Statement",
-    "undefinedMethod": "Undefined Method: '{1}'",
+    "superClassIsUndefined": "Super Class '{1}' is not defined", //親クラス {1}は定義されていません
+    "classIsUndefined": "Class {1} is Undefined", //クラス {1}は定義されていません
+    "invalidLeftValue": "{1} is not a valid Left Value", //'{1}'は左辺には書けません．
+    "fieldDeclarationRequired": "'{1}' is not declared, If you have meant it is a Field, Declare Explicitly.", //{1}は宣言されていません（フィールドの場合，明示的に宣言してください）．
+    "duplicateKeyInObjectLiteral": "Duplicate Key In Object Literal: {1}", //オブジェクトリテラルのキー名'{1}'が重複しています
+    "cannotUseStringLiteralAsAShorthandOfObjectValue": "Cannot Use String Literal as a Shorthand of Object Value", //オブジェクトリテラルのパラメタに単独の文字列は使えません
+    "breakShouldBeUsedInIterationOrSwitchStatement": "break; Should be Used In Iteration or switch Statement", //break； は 繰り返しまたはswitch文の中で使います.
+    "continueShouldBeUsedInIterationStatement": "continue; Should be Used In Iteration Statement", //continue； は繰り返しの中で使います.
+    "cannotUseObjectLiteralAsTheExpressionOfStatement": "Cannot Use Object Literal As The Expression Of Statement", //オブ ジェクトリテラル単独の式文は書けません．
+    "undefinedMethod": "Undefined Method: '{1}'", //メソッド{1}はありません．
     undefinedSuperMethod: "Method '{1}' is defined in neigher superclass or including modules.",
-    "notAWaitableMethod": "Not A Waitable Method: '{1}'",
-    "circularDependencyDetected": "Circular Dependency Detected: {1}",
-    "cannotWriteReturnInTryStatement": "Cannot Write Return In Try Statement",
-    "cannotWriteBreakInTryStatement": "Cannot Write Break In Try Statement",
-    "cannotWriteContinueInTryStatement": "Cannot Write Continue In Try Statement",
-    "cannotWriteTwoOrMoreCatch": "Cannot Write Two Or More Catch",
-    "lexicalError": "Lexical Error",
-    "parseError": "Parse Error",
-    "ambiguousClassName": "Ambiguous Class Name: {1}.{2} vs {3}",
-    "cannotInvokeMethod": "Cannot Invoke Method {1}(={2}).{3}",
-    "notAMethod": "Not A Method: {1}{2}(={3})",
-    "notAFunction": "Not A Function: {1}",
-    "uninitialized": "Uninitialized: {1}(={2})",
-    "newIsRequiredOnInstanciate": "new is required to Instanciate {1}",
-    "bootClassIsNotFound": "Boot Class {1} Is Not Found",
+    "notAWaitableMethod": "Not A Waitable Method: '{1}'", //メソッド{1}は待機可能メソッドではありません
+    "circularDependencyDetected": "Circular Dependency Detected: {1}", //次のクラス間に循環参照があります: {1}
+    "cannotWriteReturnInTryStatement": "Cannot Write Return In Try Statement", //現実装では、tryの中にreturnは書けません
+    "cannotWriteBreakInTryStatement": "Cannot Write Break In Try Statement", //現実装では、tryの中にbreakは書けません
+    "cannotWriteContinueInTryStatement": "Cannot Write Continue In Try Statement", //現実装では、tryの中にcontinueは書けま せん
+    "cannotWriteTwoOrMoreCatch": "Cannot Write Two Or More Catch", //現実装では、catch節1個のみをサポートしています
+    "lexicalError": "Lexical Error", //文法エラー(Token)
+    "parseError": "Parse Error", //文法エラー
+    "ambiguousClassName": "Ambiguous Class Name: {1}.{2} vs {3}", //曖昧なクラス名： {1}.{2}, {3}
+    "cannotInvokeMethod": "Cannot Invoke Method {1}(={2}).{3}", //{1}(={2})のメソッド {3}を呼び出せません
+    "notAMethod": "Not A Method: {1}{2}(={3})", //{1}{2}(={3})はメソッドではありません
+    "notAFunction": "Not A Function: {1}", //{1}は関数ではありません
+    "uninitialized": "Uninitialized: {1}(={2})", //{1}(={2})は初期化されていなません
+    "newIsRequiredOnInstanciate": "new is required to Instanciate {1}", //クラス名{1}はnewをつけて呼び出して下さい。
+    "bootClassIsNotFound": "Boot Class {1} Is Not Found", //{1}というクラスはありません．
     "infiniteLoopDetected": "Infinite Loop Detected",
+    "blockScopedVarDeclConflict": "'{1}' is already declared as a parmeter or 'var' declaration.",
+    "duplicateVarDecl": "'{1}' is declared twice.",
 };
 /*let buf="";
     for (let k of Object.keys(ja)) {

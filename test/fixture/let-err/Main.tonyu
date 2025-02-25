@@ -1,0 +1,20 @@
+native setTimeout;
+native console;
+native Promise;
+
+\test(_x) {
+    let x=3; // Error
+}
+\dup() {
+    let x=5;
+    let a=3,x=3; //Error
+}
+\dupvar() {
+    var x=5;
+    let a=3,x=3; //Error
+}
+x=3;
+if (x==3) {
+    let x=5;
+    console.log(x);
+}

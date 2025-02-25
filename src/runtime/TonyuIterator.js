@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IT2 = exports.IT = void 0;
+exports.IT = IT;
+exports.IT2 = IT2;
 //define(["Klass"], function (Klass) {
 //var Klass=require("../lib/Klass");
 const SYMIT = typeof Symbol !== "undefined" && Symbol.iterator;
@@ -115,7 +116,6 @@ function IT(set, arity) {
         throw new Error(set + " is not iterable");
     }
 }
-exports.IT = IT;
 function IT2(set, arity) {
     const it = IT(set, arity);
     return function* () {
@@ -128,7 +128,6 @@ function IT2(set, arity) {
         }
     }();
 }
-exports.IT2 = IT2;
 //	module.exports=IT;
 //   Tonyu.iterator=IT;
 //	return IT;

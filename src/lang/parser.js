@@ -3,7 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRange = exports.setRange = exports.addRange = exports.lazy = exports.TokensParser = exports.tokensParserContext = exports.StringParser = exports.State = exports.Parser = exports.ParserContext = exports.SUBELEMENTS = exports.ALL = void 0;
+exports.TokensParser = exports.tokensParserContext = exports.StringParser = exports.State = exports.Parser = exports.ParserContext = exports.SUBELEMENTS = exports.ALL = void 0;
+exports.lazy = lazy;
+exports.addRange = addRange;
+exports.setRange = setRange;
+exports.getRange = getRange;
 const R_1 = __importDefault(require("../lib/R"));
 exports.ALL = Symbol("ALL");
 exports.SUBELEMENTS = Symbol("SUBELEMENTS");
@@ -101,6 +105,23 @@ class ParserContext {
 }
 exports.ParserContext = ParserContext;
 class Parser {
+    get isEmpty() {
+        if (!this.struct)
+            return false;
+        if (this.struct.type === "empty")
+            return true;
+        if (this.struct.type === "and" || this.struct.type === "or") {
+            for (let p of this.struct.elems) {
+                if (!p.isEmpty)
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+    // Parser.parse:: State->State
+    //static create(parserFunc:ParseFunc) { return create(parserFunc);}
+    create(parserFunc) { return this.context.create(parserFunc); }
     constructor(context, parseFunc) {
         this.context = context;
         if (!options.traceTap) {
@@ -134,23 +155,6 @@ class Parser {
             };
         }
     }
-    get isEmpty() {
-        if (!this.struct)
-            return false;
-        if (this.struct.type === "empty")
-            return true;
-        if (this.struct.type === "and" || this.struct.type === "or") {
-            for (let p of this.struct.elems) {
-                if (!p.isEmpty)
-                    return false;
-            }
-            return true;
-        }
-        return false;
-    }
-    // Parser.parse:: State->State
-    //static create(parserFunc:ParseFunc) { return create(parserFunc);}
-    create(parserFunc) { return this.context.create(parserFunc); }
     dispTbl() {
         if (!this._first) {
             console.log("No table for " + this.name);
@@ -615,6 +619,7 @@ exports.Parser = Parser;
 function isStrStateSrc(src) { return typeof src.str === "string"; }
 function isTokenStateSrc(src) { return src.tokens; }
 class State {
+    get success() { return !this._error; }
     constructor(strOrTokens, global) {
         /*updateMaxPos(npos:number) {
             if (npos > this.src.maxPos) {
@@ -635,7 +640,6 @@ class State {
             //this.success=true;
         }
     }
-    get success() { return !this._error; }
     clone() {
         var s = new State();
         s.src = this.src;
@@ -842,7 +846,6 @@ function lazy(context, pf) {
     self._lazy = lz;
     return self;
 }
-exports.lazy = lazy;
 function addRange(res, newr) {
     if (newr == null)
         return res;
@@ -859,7 +862,6 @@ function addRange(res, newr) {
         res.len = newEnd - res.pos;
     return res;
 }
-exports.addRange = addRange;
 function setRange(res) {
     if (res == null || typeof res == "string" || typeof res == "number" || typeof res == "boolean")
         return;
@@ -874,7 +876,6 @@ function setRange(res) {
     }
     return res;
 }
-exports.setRange = setRange;
 function getRange(e) {
     if (e == null)
         return null;
@@ -884,7 +885,6 @@ function getRange(e) {
         return e;
     return null;
 }
-exports.getRange = getRange;
 //	return $;
 //})();
 //export= Parser;

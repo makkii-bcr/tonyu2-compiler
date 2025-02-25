@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tokenizerFactory = exports.BQX = exports.BQT = exports.BQH = void 0;
+exports.BQX = exports.BQT = exports.BQH = void 0;
+exports.tokenizerFactory = tokenizerFactory;
 const parser_1 = require("./parser");
 exports.BQH = "backquoteHead", exports.BQT = "backquoteTail", exports.BQX = "backquoteText";
 function tokenizerFactory({ reserved, caseInsensitive }) {
@@ -388,5 +389,4 @@ function tokenizerFactory({ reserved, caseInsensitive }) {
     }
     return { parse: parse, extension: "js", reserved: reserved };
 }
-exports.tokenizerFactory = tokenizerFactory;
 ;
