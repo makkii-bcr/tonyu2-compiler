@@ -4135,7 +4135,8 @@ function annotateSource2(klass, env) {
         //console.log("F_PARAMTYPES", f.name, f.paramTypes);
     }
     function declaredAsNonBlockScope(finfo, name) {
-        if (finfo.params.some(p => p.name.text === name.text))
+        var _a;
+        if ((_a = finfo.params) === null || _a === void 0 ? void 0 : _a.some(p => p.name.text === name.text))
             return true;
         if ((0, CompilerTypes_1.isNonArrowFuncInfo)(finfo)) {
             if (finfo.locals && finfo.locals.varDecls[name.text])

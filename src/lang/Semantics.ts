@@ -903,7 +903,7 @@ function annotateSource2(klass:C_Meta, env:BuilderEnv) {//B
 		//console.log("F_PARAMTYPES", f.name, f.paramTypes);
 	}
 	function declaredAsNonBlockScope(finfo: FuncInfo ,name: Token) {
-		if (finfo.params.some(p=>p.name.text===name.text)) return true;
+		if (finfo.params?.some(p=>p.name.text===name.text)) return true;
 		if (isNonArrowFuncInfo(finfo)) {
 			if (finfo.locals && finfo.locals.varDecls[name.text]) return true;
 		}
